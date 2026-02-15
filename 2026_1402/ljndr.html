@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Postal Ale Ivon | Moon Dev</title>
+    
+    <link rel="icon" type="image/png" href="src/logo_moon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Fira+Code:wght@500&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-surface: #A78BFA;
+            --card-paper: #fffbf0;
+            --text-ink: #1e293b;
+            --text-pencil: #64748b;
+            --accent-red: #e11d48;
+            --accent-blue: #2563eb;
+            --line-color: #cbd5e1;
+        }
+
+        body {
+            background-color: var(--bg-surface);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden; 
+        }
+
+        .postcard-container {
+            position: relative;
+            width: 700px;
+            max-width: 90%;
+            margin: 50px;
+        }
+
+        /* Borde de Correo Aéreo */
+        .postcard-wrapper {
+            padding: 12px;
+            border-radius: 16px;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--accent-red),
+                var(--accent-red) 15px,
+                #fffbf0 15px,
+                #fffbf0 25px,
+                var(--accent-blue) 25px,
+                var(--accent-blue) 40px,
+                #fffbf0 40px,
+                #fffbf0 50px
+            );
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .postcard {
+            background-color: var(--card-paper);
+            color: var(--text-ink);
+            border-radius: 10px;
+            padding: 45px;
+            display: flex;
+            gap: 40px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+            background-image: linear-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 100% 30px;
+        }
+
+        .side-message {
+            flex: 1.3;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: rgba(255, 251, 240, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .handwritten-body {
+            font-family: 'Caveat', cursive;
+            font-size: 2.2rem;
+            line-height: 1.2;
+            color: var(--text-ink);
+            margin: 0;
+            transform: rotate(-1deg);
+            transition: opacity 0.3s ease;
+        }
+
+        .vertical-divider {
+            width: 1px;
+            background-color: var(--line-color);
+        }
+
+        .side-address {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: rgba(255, 251, 240, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .stamp-box {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 90px;
+            border: 2px dotted var(--line-color);
+            padding: 5px;
+            transform: rotate(5deg);
+        }
+        
+        .stamp-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            opacity: 0.8;
+        }
+
+        .address-group { margin-top: 80px; }
+
+        .field-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-pencil);
+            margin-bottom: 2px;
+        }
+
+        .field-value {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            color: var(--text-ink);
+            margin: 0 0 25px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--text-ink);
+            font-weight: bold;
+        }
+
+        .surprise-btn {
+            margin-top: 35px;
+            padding: 10px 24px;
+            background-color: var(--accent-red);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(225, 29, 72, 0.3);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: fit-content;
+        }
+
+        .surprise-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 12px rgba(225, 29, 72, 0.4);
+        }
+
+        .floating-star {
+            position: absolute;
+            width: 100px;
+            top: -30px;
+            left: -30px;
+            z-index: 10;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2));
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .hanging-avatar {
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 50%;
+            bottom: -40px;
+            right: -20px;
+            z-index: 10;
+            border: 5px solid #fff; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        /* --- ESTILOS --- */
+        .chocolate-particle {
+            position: fixed;
+            top: -100px; 
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        @keyframes caer {
+            to { transform: translateY(120vh) rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .postcard-container { width: 85%; margin: 40px auto; }
+            .postcard { flex-direction: column; padding: 30px 20px; gap: 30px; }
+            .vertical-divider { width: 100%; height: 1px; margin: 10px 0; }
+            .handwritten-body { font-size: 1.8rem; text-align: center; }
+            .side-message { align-items: center; padding: 10px; }
+            .floating-star { width: 70px; top: -35px; left: -20px; }
+            .hanging-avatar { width: 100px; height: 100px; bottom: -30px; right: -10px; }
+            .address-group { margin-top: 60px; }
+            .stamp-box { width: 60px; height: 70px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="postcard-container">
+        
+        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Estrella" class="floating-star">
+
+        <div class="postcard-wrapper">
+            <div class="postcard">
+                <div class="side-message">
+                    <p class="handwritten-body" id="frase-principal">
+                        "Que este San Valentín te recuerde lo especial que eres y lo mucho que mereces amor en todas sus formas."
+                    </p>
+                    <button class="surprise-btn" id="btn-sorpresa">
+                        Sorpresa
+                    </button>
+                </div>
+
+                <div class="vertical-divider"></div>
+
+                <div class="side-address">
+                    <div class="stamp-box">
+                        <img src="src/logo_moon.png" alt="Sello" class="stamp-image">
+                    </div>
+
+                    <div class="address-group">
+                        <span class="field-label">Para:</span>
+                        <h3 class="field-value">🐈️ 🐭</h3>
+                        
+                        <span class="field-label">De:</span>
+                        <h3 class="field-value">Moon Dev 🦉</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <img src="src/avatar.png" alt="Avatar Moon Dev" class="hanging-avatar">
+
+    </div>
+
+    <script>
+        const frases = [
+            "Feliz Día de San Valentín. Que hoy y siempre tengas a tu lado personas que te abracen el alma. 🌹",
+            "Confía en tu camino, lo estás haciendo increíble.",
+            "Hoy celebramos el amor… pero ojalá lo vivas todos los días del año. ¡Bonito San Valentín! ✨",
+            "Que cada meta cumplida sea solo el inicio de otra aún más grande.",
+            "Que te quieran bonito… y que te inviten el postre. 🍰 "
+        ];
+
+        let indiceActual = 0;
+        const fraseElement = document.getElementById('frase-principal');
+        const btnElement = document.getElementById('btn-sorpresa');
+
+        function cambiarFrase() {
+            fraseElement.style.opacity = 0;
+            setTimeout(() => {
+                let nuevoIndice;
+                do {
+                    nuevoIndice = Math.floor(Math.random() * frases.length);
+                } while (nuevoIndice === indiceActual);
+                indiceActual = nuevoIndice;
+                fraseElement.innerHTML = frases[indiceActual];
+                fraseElement.style.opacity = 1;
+            }, 300);
+        }
+
+        function crearChocolate() {
+            const choco = document.createElement('img');
+            choco.src = 'src/q/heart.png';
+            choco.classList.add('chocolate-particle');
+            
+            choco.style.left = Math.random() * 90 + 'vw';
+            const duracion = Math.random() * 3 + 2;
+            choco.style.animation = `caer ${duracion}s linear forwards`;
+            
+            const tamano = Math.random() * 30 + 40;
+            choco.style.width = `${tamano}px`;
+            
+            document.body.appendChild(choco);
+            setTimeout(() => { choco.remove(); }, duracion * 1000);
+        }
+
+        function lanzarLluvia() {
+            let count = 0;
+            const intervalo = setInterval(() => {
+                crearChocolate();
+                count++;
+                if (count >= 25) clearInterval(intervalo);
+            }, 100);
+        }
+
+        btnElement.addEventListener('click', () => {
+            cambiarFrase();
+            lanzarLluvia();
+            btnElement.disabled = true;
+            setTimeout(() => { btnElement.disabled = false; }, 2000);
+        });
+    </script>
+
+</body>
+</html>
